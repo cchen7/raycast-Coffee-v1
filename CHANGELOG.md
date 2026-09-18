@@ -1,5 +1,10 @@
 # Coffee Changelog
 
+## [Fix] - 2026-09-18
+
+- Prevent typed `Caffeinate Until` from starting two processes when React replays its mount effect in development.
+- Add a regression test and record Raycast 1.104.29 runtime verification in `TESTING.md`.
+
 ## [Coffee V1 compatibility fork] - 2026-09-18
 
 - Target Raycast 1.104.29 on macOS with pinned API 1.104.25 and utils 2.2.2.

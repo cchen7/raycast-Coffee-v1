@@ -1,5 +1,5 @@
 import { Action, ActionPanel, Form, Toast, popToRoot, showToast } from "@raycast/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { startCaffeinate, deviceName } from "./utils";
 
 function parseTypedTime(time: string): Date | null {
@@ -64,18 +64,18 @@ function defaultPickerTarget(): Date {
 export default function Command(props: { arguments: Arguments.CaffeinateUntil }) {
   const typedTime = props.arguments.time;
   const typedTimeValid = typedTime ? parseTypedTime(typedTime) !== null : false;
-  const [handled, setHandled] = useState(false);
+  const handled = useRef(false);
 
   useEffect(() => {
-    if (!typedTime || handled) return;
-    setHandled(true);
+    if (!typedTime || handled.current) return;
+    handled.current = true;
     const target = parseTypedTime(typedTime);
     if (!target) {
       showToast(Toast.Style.Failure, "Unrecognized time format");
       return;
     }
     caffeinateUntilTarget(target).then(() => popToRoot());
-  }, [typedTime, handled]);
+  }, [typedTime]);
 
   // Hide the form when the typed argument parses cleanly so users on the
   // keyboard path don't see a flash before popToRoot dismisses the view.

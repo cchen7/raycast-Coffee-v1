@@ -243,7 +243,7 @@ function loadUntilPicker() {
 
   const react = {
     createElement: (type, props, ...children) => ({ type, props: props || {}, children }),
-    useState: (init) => [init, () => {}],
+    useRef: () => ({ current: false }),
     useEffect: () => {},
   };
 
@@ -292,4 +292,34 @@ test("caffeinateUntil picker rejects null target without starting caffeinate", a
 
   assert.equal(api.showToast.mock.callCount(), 1);
   assert.deepEqual(events, []);
+});
+
+test("typed Caffeinate Until starts once when its mount effect is replayed", async () => {
+  let effect;
+  const handled = { current: false };
+  const startCaffeinate = mock.fn(async () => {});
+  const api = {
+    popToRoot: mock.fn(async () => {}),
+    showToast: mock.fn(async () => {}),
+    Toast: { Style: { Failure: "failure" } },
+  };
+  const Component = loadSource("caffeinateUntil.tsx", {
+    "@raycast/api": api,
+    "./utils": { startCaffeinate, deviceName: () => "Mac" },
+    react: {
+      useState: (initial) => [initial, () => {}],
+      useRef: () => handled,
+      useEffect: (callback) => {
+        effect = callback;
+      },
+    },
+  }).default;
+
+  assert.equal(Component({ arguments: { time: "23:59" } }), null);
+  effect();
+  effect(); // Development effect replay happens before a state update is rendered.
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.equal(startCaffeinate.mock.callCount(), 1);
+  assert.equal(api.popToRoot.mock.callCount(), 1);
 });

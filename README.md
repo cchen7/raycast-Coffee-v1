@@ -33,7 +33,7 @@ npm run build
 npm run lint
 ```
 
-The inherited tests cover duration input, process arguments, and HUD ordering using mocked Raycast APIs and child processes. Successful tests and compilation do not replace an in-app check on Raycast 1.x. Before relying on it, check timed caffeination and expiry, manual stop, the menu bar, application selection, and a short schedule in Raycast. AI tools retain upstream behavior and still depend on the host's AI access.
+The 20 automated tests cover duration input, process arguments, HUD ordering, and replay of the typed Until effect using mocked Raycast APIs and child processes. Core commands and schedule state transitions have also been exercised inside Raycast 1.104.29; see [TESTING.md](TESTING.md) for results and remaining checks. AI tools retain upstream behavior and still depend on the host's AI access.
 
 Keep the Raycast API and utils versions pinned when updating dependencies. The Store publish script is intentionally omitted from this personal fork.
 
