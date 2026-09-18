@@ -14,13 +14,6 @@ import { useExec } from "@raycast/utils";
 import { useEffect, useState } from "react";
 import { formatDuration, startCaffeinate, stopCaffeinate, deviceName, getSchedule } from "./utils";
 import { maybeAutoCaffeinate } from "./status";
-import { get_caffeinate_state } from "rust:../rust";
-
-interface CaffeinateStatus {
-  running: boolean;
-  startTime: number | null;
-  durationSeconds: number | null;
-}
 
 function parseEtime(etime: string): number {
   const parts = etime.split(":").reverse();
@@ -56,10 +49,6 @@ const DURATION_PRESETS: { label: string; seconds: number }[] = [
 ];
 
 function useCaffeinateInfo(execute: boolean) {
-  if (process.platform === "win32") {
-    return useWindowsCaffeinateInfo(execute);
-  }
-
   const { isLoading, data, mutate } = useExec("ps -o etime,args= -p $(pgrep caffeinate) 2>/dev/null", [], {
     shell: true,
     execute,
@@ -86,70 +75,6 @@ function useCaffeinateInfo(execute: boolean) {
     data: data ?? { isRunning: false, totalSeconds: null, startTime: null },
     mutate,
   };
-}
-
-type MutateOptions = { optimisticUpdate?: () => CaffeinateInfo };
-
-function useWindowsCaffeinateInfo(execute: boolean) {
-  const [isLoading, setIsLoading] = useState(execute);
-  const [data, setData] = useState<CaffeinateInfo>({ isRunning: false, totalSeconds: null, startTime: null });
-
-  const applyState = (info: CaffeinateStatus): CaffeinateInfo => ({
-    isRunning: info.running,
-    totalSeconds: info.durationSeconds,
-    startTime: info.startTime ? info.startTime * 1000 : null,
-  });
-
-  useEffect(() => {
-    if (!execute) return;
-    let disposed = false;
-
-    const refresh = async () => {
-      try {
-        const info = await get_caffeinate_state();
-        if (disposed) return;
-        setData(applyState(info));
-      } catch {
-        if (disposed) return;
-        setData({ isRunning: false, totalSeconds: null, startTime: null });
-      } finally {
-        if (!disposed) setIsLoading(false);
-      }
-    };
-
-    refresh();
-    const interval = setInterval(refresh, 5000);
-    return () => {
-      disposed = true;
-      clearInterval(interval);
-    };
-  }, [execute]);
-
-  const mutate = async (ctx?: Promise<unknown>, options?: MutateOptions) => {
-    const previous = data;
-    if (options?.optimisticUpdate) setData(options.optimisticUpdate());
-    let operationError: unknown;
-    if (ctx) {
-      try {
-        await ctx;
-      } catch (e) {
-        operationError = e;
-      }
-    }
-    if (operationError) {
-      setData(previous);
-      throw operationError;
-    }
-    try {
-      const info = await get_caffeinate_state();
-      setData(applyState(info));
-    } catch {
-      // The operation succeeded but the refresh failed; keep the optimistic
-      // value, which reflects the completed operation, until a later refresh.
-    }
-  };
-
-  return { isLoading, data, mutate };
 }
 
 export default function Command(props: LaunchProps) {

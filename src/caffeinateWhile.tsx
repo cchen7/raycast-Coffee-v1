@@ -1,27 +1,15 @@
 import { Action, ActionPanel, Form, Icon, popToRoot } from "@raycast/api";
 import { runAppleScript } from "@raycast/utils";
 import { useEffect, useState } from "react";
-import { list_processes } from "rust:../rust";
 import { startCaffeinate } from "./utils";
 
 interface Process {
   name: string;
   pid: string;
-  windowHandle?: number;
   iconPath?: string;
 }
 
 async function getRunningProcesses(): Promise<Process[]> {
-  if (process.platform === "win32") {
-    const processes = await list_processes();
-    return processes.map((process) => ({
-      name: process.name,
-      pid: String(process.pid),
-      windowHandle: process.windowHandle,
-      iconPath: process.path ?? undefined,
-    }));
-  }
-
   const ids = (
     await runAppleScript(
       `tell application "System Events" to get the unix id of every process whose background only is false`,
@@ -92,11 +80,10 @@ export default function Command() {
             title="Caffeinate"
             onSubmit={async (data) => {
               const process = processes.find((p) => p.pid === data.process);
-              const windowArg = process?.windowHandle ? ` -wh ${process.windowHandle}` : "";
               await startCaffeinate(
                 { menubar: true, status: true },
                 "Caffeinate process started",
-                `-w ${data.process}${windowArg}`,
+                `-w ${data.process}`,
                 process ? { kind: "while", appName: process.name } : undefined,
               );
               popToRoot();

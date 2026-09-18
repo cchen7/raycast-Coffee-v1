@@ -1,5 +1,4 @@
 import { runAppleScript } from "@raycast/utils";
-import { windowsListProcesses } from "../windowsApi";
 import { startCaffeinate, deviceName } from "../utils";
 
 type Input = {
@@ -12,7 +11,6 @@ type Input = {
 type ProcessEntry = {
   id: string;
   name: string;
-  windowHandle?: number;
 };
 
 /**
@@ -30,8 +28,7 @@ export default async function (input: Input) {
     throw new Error(`Application "${application}" is not currently running`);
   }
 
-  const windowArg = target.windowHandle ? ` -wh ${target.windowHandle}` : "";
-  await startCaffeinate({ menubar: true, status: true }, undefined, `-w ${target.id}${windowArg}`, {
+  await startCaffeinate({ menubar: true, status: true }, undefined, `-w ${target.id}`, {
     kind: "while",
     appName: application,
   });
@@ -40,15 +37,6 @@ export default async function (input: Input) {
 }
 
 async function getRunningProcesses(): Promise<ProcessEntry[]> {
-  if (process.platform === "win32") {
-    const running = await windowsListProcesses();
-    return running.map((process) => ({
-      id: String(process.pid),
-      name: process.name.toLowerCase(),
-      windowHandle: process.windowHandle,
-    }));
-  }
-
   const ids = (
     await runAppleScript(
       `tell application "System Events" to get the unix id of every process whose background only is false`,

@@ -1,5 +1,12 @@
 # Coffee Changelog
 
+## [Coffee V1 compatibility fork] - 2026-09-18
+
+- Target Raycast 1.104.29 on macOS with pinned API 1.104.25 and utils 2.2.2.
+- Use the separate Coffee V1 extension identifier and command subtitles.
+- Remove Windows-only Rust integration while retaining upstream macOS fixes.
+- Export builds locally and expose the inherited regression tests with `npm test`.
+
 ## [Fix] - 2026-09-17
 
 - Fix `Caffeinate for ...` and `Caffeinate Until` showing the HUD without actually starting `caffeinate` — the work now runs before the HUD closes the view command.
@@ -7,13 +14,14 @@
 ## [Fix] - 2026-09-15
 
 - Restore inline hours, minutes, and seconds arguments for `Caffeinate for ...` and use an invisible view to reset command state after submission.
+
 ## [Fix] - 2026-09-14
 
 - Converted the `Caffeinate for ...` command from inline arguments back to a Form so its state isn't persisted between invocations.
 
 ## [Enhancement] - 2026-08-30
 
-- Add reason to `Caffeinate Status`, showing 4 types, examples: 
+- Add reason to `Caffeinate Status`, showing 4 types, examples:
   - `Caffeinate Until`: until 2:00 PM
   - `Caffeinate For ...`: 42m left
   - `Caffeinate While`: while Slack is running

@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "coffee",
-  "title": "Coffee",
-  "description": "Prevent the sleep function on your computer",
+  "name": "coffee-v1",
+  "title": "Coffee V1",
+  "description": "Keep your Mac awake with Coffee, maintained for Raycast 1.x",
   "icon": "logo.png",
   "author": "mooxl",
   "contributors": [
@@ -33,36 +33,35 @@
     "awake"
   ],
   "platforms": [
-    "macOS",
-    "Windows"
+    "macOS"
   ],
   "license": "MIT",
   "commands": [
     {
       "name": "caffeinate",
       "title": "Caffeinate",
-      "subtitle": "Coffee",
+      "subtitle": "Coffee V1",
       "description": "Prevent your computer from sleeping",
       "mode": "no-view"
     },
     {
       "name": "decaffeinate",
       "title": "Decaffeinate",
-      "subtitle": "Coffee",
+      "subtitle": "Coffee V1",
       "description": "Turn off the caffeine",
       "mode": "no-view"
     },
     {
       "name": "caffeinateWhile",
       "title": "Caffeinate While",
-      "subtitle": "Coffee",
+      "subtitle": "Coffee V1",
       "description": "Prevent your computer from sleeping while a certain app is running",
       "mode": "view"
     },
     {
       "name": "index",
       "title": "Caffeinate Status Menu Bar",
-      "subtitle": "Coffee",
+      "subtitle": "Coffee V1",
       "description": "Get the status of the current caffeination in your menu bar",
       "mode": "menu-bar",
       "interval": "1m",
@@ -81,14 +80,14 @@
     {
       "name": "caffeinateToggle",
       "title": "Toggle Caffeinate",
-      "subtitle": "Coffee",
+      "subtitle": "Coffee V1",
       "description": "Toggle caffeination",
       "mode": "no-view"
     },
     {
       "name": "caffeinateFor",
       "title": "Caffeinate for ...",
-      "subtitle": "Coffee",
+      "subtitle": "Coffee V1",
       "description": "Prevent your computer from sleeping for a certain time",
       "mode": "view",
       "arguments": [
@@ -115,7 +114,7 @@
     {
       "name": "caffeinateUntil",
       "title": "Caffeinate Until",
-      "subtitle": "Coffee",
+      "subtitle": "Coffee V1",
       "description": "Prevent your computer from sleeping until a certain time. Type one like 5pm, or leave the field empty to pick a date and time.",
       "mode": "view",
       "arguments": [
@@ -131,14 +130,16 @@
       "name": "addSchedule",
       "title": "Schedule Caffeination",
       "description": "Schedule caffeination",
-      "mode": "view"
+      "mode": "view",
+      "subtitle": "Coffee V1"
     },
     {
       "name": "status",
       "title": "Caffeinate Status",
       "description": "Show the current caffeination status",
       "mode": "no-view",
-      "interval": "1m"
+      "interval": "1m",
+      "subtitle": "Coffee V1"
     }
   ],
   "tools": [
@@ -208,7 +209,7 @@
     },
     {
       "name": "preventDisk",
-      "description": "Prevent the disk from sleeping. This option is not supported on Windows and will have no effect",
+      "description": "Prevent the disk from sleeping",
       "type": "checkbox",
       "required": false,
       "default": true,
@@ -242,7 +243,7 @@
     },
     {
       "name": "startCaffeinateOnLaunch",
-      "description": "Automatically keep your computer awake (indefinitely) when Raycast starts. Requires the Caffeinate Status command (15 s interval) or the Caffeinate Status Menu Bar command (1 m interval) to be enabled (on macOS)",
+      "description": "Automatically keep your computer awake (indefinitely) when Raycast starts. Requires the Caffeinate Status command (1 m interval) or the Caffeinate Status Menu Bar command (1 m interval) to be enabled (on macOS)",
       "type": "checkbox",
       "required": false,
       "default": false,
@@ -258,23 +259,23 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^2.1.2",
-    "@raycast/utils": "^2.3.0"
+    "@raycast/api": "1.104.25",
+    "@raycast/utils": "2.2.2"
   },
   "devDependencies": {
-    "@raycast/eslint-config": "^2.2.0",
-    "@types/node": "26.4.0",
-    "@types/react": "19.2.18",
-    "eslint": "^10.9.1",
-    "prettier": "^3.9.6",
-    "typescript": "^6.0.3"
+    "@raycast/eslint-config": "2.1.1",
+    "@types/node": "22.19.17",
+    "@types/react": "19.0.10",
+    "eslint": "9.39.5",
+    "prettier": "3.5.3",
+    "typescript": "5.8.2"
   },
   "scripts": {
-    "build": "ray build -e dist",
+    "build": "ray build -e dist -o dist",
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
     "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
-    "publish": "npx @raycast/api@latest publish"
+    "test": "node --test tests/*.test.cjs"
   }
 }

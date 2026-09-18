@@ -42,48 +42,29 @@ export async function isScheduleMonitorActivated(): Promise<boolean> {
  * the bundle ID — immune to process-table visibility restrictions that cause
  * `pgrep` to return nothing from within the extension context.
  *
- * Windows: queries the Raycast.exe PID via `tasklist` — stable across the session
- * regardless of which process spawns the extension command.
- *
  * Fallback: `process.ppid` (the Raycast Helper PID) which is stable within a
  * session in production builds, though it may vary across commands in dev mode.
  */
 function getRaycastSessionId(): string {
-  if (process.platform === "win32") {
-    try {
-      const out = execFileSync("tasklist", ["/FI", "IMAGENAME eq Raycast.exe", "/FO", "CSV", "/NH"], {
-        encoding: "utf8",
-      }).trim();
+  try {
+    const out = execFileSync("/usr/bin/lsappinfo", ["info", "-app", "com.raycast.macos"], {
+      encoding: "utf8",
+    }).trim();
 
-      // CSV output: "Raycast.exe","12345","Console","1","12,452 K"
-      const pidMatch = out.match(/"Raycast\.exe","(\d+)"/);
-      if (pidMatch?.[1]) {
-        return `pid:${pidMatch[1]}`;
-      }
-    } catch {
-      // tasklist failed or Raycast not running — fall through.
+    const pidMatch = out.match(/pid\s*=\s*(\d+)/);
+    if (pidMatch?.[1]) {
+      return `pid:${pidMatch[1]}`;
     }
-  } else {
-    try {
-      const out = execFileSync("/usr/bin/lsappinfo", ["info", "-app", "com.raycast.macos"], {
-        encoding: "utf8",
-      }).trim();
 
-      const pidMatch = out.match(/pid\s*=\s*(\d+)/);
-      if (pidMatch?.[1]) {
-        return `pid:${pidMatch[1]}`;
-      }
-
-      const dateMatch = out.match(/\d{4}\/\d{2}\/\d{2}\s+\d{2}:\d{2}:\d{2}/);
-      if (dateMatch?.[0]) {
-        return `launch:${dateMatch[0]}`;
-      }
-    } catch {
-      // lsappinfo unavailable or Raycast not registered yet — fall through.
+    const dateMatch = out.match(/\d{4}\/\d{2}\/\d{2}\s+\d{2}:\d{2}:\d{2}/);
+    if (dateMatch?.[0]) {
+      return `launch:${dateMatch[0]}`;
     }
+  } catch {
+    // lsappinfo unavailable or Raycast not registered yet — fall through.
   }
 
-  // Fallback: parent PID (stable in production on both platforms; may vary in dev).
+  // Fallback: parent PID (stable in production; may vary in dev).
   return `ppid:${process.ppid}`;
 }
 

@@ -1,7 +1,6 @@
 import { getPreferenceValues, launchCommand, LaunchType, LocalStorage, showHUD } from "@raycast/api";
 import { execSync, spawn } from "node:child_process";
 import { Schedule } from "./interfaces";
-import { windowsIsCaffeinateRunning, windowsStartCaffeinate, windowsStopCaffeinate } from "./windowsApi";
 
 export type { Schedule };
 
@@ -53,13 +52,9 @@ export async function startCaffeinate(
 ) {
   await stopCaffeinate({ menubar: false, status: false });
 
-  if (process.platform === "win32") {
-    await windowsStartCaffeinate(additionalArgs);
-  } else {
-    const args = ["-u", ...generateArgs(additionalArgs).split(/\s+/).filter(Boolean)];
-    const child = spawn("/usr/bin/caffeinate", args, { detached: true, stdio: "ignore" });
-    child.unref();
-  }
+  const args = ["-u", ...generateArgs(additionalArgs).split(/\s+/).filter(Boolean)];
+  const child = spawn("/usr/bin/caffeinate", args, { detached: true, stdio: "ignore" });
+  child.unref();
 
   await setCaffeinationReason(reason);
   await update(updates, true);
@@ -85,11 +80,7 @@ export async function stopCaffeinate(
     }
   }
   try {
-    if (process.platform === "win32") {
-      await windowsStopCaffeinate();
-    } else {
-      execSync("/usr/bin/killall caffeinate || true");
-    }
+    execSync("/usr/bin/killall caffeinate || true");
   } catch (e) {
     if (pausedSchedule) {
       pausedSchedule.IsManuallyDecafed = false;
@@ -143,14 +134,11 @@ function generateArgs(additionalArgs?: string) {
   return parts.join(" ");
 }
 
-export function deviceName(): "PC" | "Mac" {
-  return process.platform === "win32" ? "PC" : "Mac";
+export function deviceName(): "Mac" {
+  return "Mac";
 }
 
 export async function isCaffeinateRunning(): Promise<boolean> {
-  if (process.platform === "win32") {
-    return await windowsIsCaffeinateRunning();
-  }
   try {
     execSync("pgrep caffeinate");
     return true;
