@@ -5,7 +5,7 @@
 - Separate extension identifier: `coffee-v1`; title: `Coffee V1`.
 - API pinned to `1.104.25`, utils to `2.2.2`; macOS only. Removed Windows/Rust imports, implementation, and manifest platform.
 - Preserved upstream macOS behavior and recent fixes. Retained MIT license and attribution.
-- Local Git branch: `raycast-v1`; initial commit imports the original extension for comparison. No GitHub remote created yet; destination account has not been selected.
+- Repository: `https://github.com/cchen7/raycast-Coffee-v1`, branch `main`; initial commit imports the original extension for comparison. The user selected the `cchen7` account and supplied this repository as the publication destination.
 
 ## Verification
 
@@ -18,7 +18,7 @@
 
 ## Remaining
 
-- Choose the GitHub destination account and repository before publishing. A standalone `raycast-coffee-v1` repository avoids maintaining the entire extensions monorepo; it will preserve source attribution but will not have GitHub's formal fork relationship.
+- This standalone repository preserves source attribution and contains only Coffee; it does not have GitHub's formal fork relationship to the entire extensions monorepo.
 - Move the checkout to a stable user-selected location before registering it in Raycast; the current checkout is under temporary storage.
 - Run `npm run dev` to register Coffee V1 and verify actual behavior in Raycast 1.104.29: timed start/expiry, manual stop, menu bar, app selection, and a short schedule. It has not been installed or tested inside Raycast yet.
 - Disable original Coffee background commands before runtime testing. The inherited implementation uses `killall caffeinate` and detects processes globally, so original Coffee, this fork, and other `caffeinate` users share process state. Existing preferences and schedules are not migrated automatically.

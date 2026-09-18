@@ -12,6 +12,8 @@ The original extension is by **mooxl and the Coffee contributors**. The upstream
 Use a stable local checkout directory that you intend to keep. Requires an existing Node.js installation **22.22.2 or later**, npm, and Raycast 1.104.29 on macOS.
 
 ```sh
+git clone https://github.com/cchen7/raycast-Coffee-v1.git
+cd raycast-Coffee-v1
 npm ci
 npm run build
 npm run dev
